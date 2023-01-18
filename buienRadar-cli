@@ -1,0 +1,118 @@
+#!/bin/bash
+          
+clear
+
+# Check for dependencies
+
+if ! command -v convert > /dev/null || ! command -v wget > /dev/null || ! command -v ascii-image-converter > /dev/null; then
+  echo "Error: Some dependencies are not installed." 
+  echo "">&2
+  if ! command -v convert > /dev/null; then
+    echo "ImageMagick is not installed." 
+    echo "">&2
+  fi
+  if ! command -v wget > /dev/null; then
+    echo "wget is not installed." 
+    echo "">&2
+  fi
+  if ! command -v ascii-image-converter > /dev/null; then
+    echo "ascii-image-converter is not installed." 
+    echo "">&2
+  fi
+  if ! command -v bc > /dev/null; then
+    echo "bc is not installed." 
+    echo "">&2
+  fi
+  if command -v apt-get > /dev/null; then
+    echo "Try fixing this by following (some of) these steps:
+    imagemagick: sudo apt-get install imagemagick
+    wget: sudo apt-get install wget
+    bc: sudo apt-get install bc
+    ascii-image-converter: please visit: https://github.com/TheZoraiz/ascii-image-converter#debian-or-ubuntu-based-distros" 
+    echo "">&2
+  elif command -v pacman > /dev/null; then
+    echo "Try fixing this by following (some of) these steps:
+    imagemagick: sudo pacman -S imagemagick
+    wget: sudo pacman -S wget
+    bc: sudo pacman -S bc
+    ascii-image-converter: please visit: https://github.com/TheZoraiz/ascii-image-converter#aur"
+    echo "">&2
+  else
+    echo "Please install the missing dependencies manually." >&2
+  fi
+  exit 1
+fi
+                                                                                                             
+echo ""
+echo "An unofficial command-line tool to display the rain forecast from the popular Dutch website buienradar.nl "                                                                                                           
+echo "V1.0.0 - Code by github.com/daanblom"
+echo ""
+
+# Creating timestamps needed to fetch image from the web
+sleep 0.3
+ctime=$(date +%s)
+round=$(echo "$ctime / 300 - 15" | bc)
+timeFrom=$(echo "$round * 300" | bc)
+timeTo=$(echo "$timeFrom + 900" | bc)
+formatted_timeFrom=$(date -d @"$timeFrom" +"%Y%m%d%H%M")
+formatted_timeTo=$(date -d @"$timeTo" +"%Y%m%d%H%M")
+
+# Create a hidden folder to temporary data
+folder=".bcli"
+if [ ! -d "$folder" ]; then
+    mkdir $folder
+fi
+sleep 0.3
+# Inject the generated and formatted timeframes into the right place in the url
+echo "Injecting data"
+url=$(echo "https://image-cdn.buienradar.nl/br-processing/image-api/RadarMapRainWebmercatorNL/Sprite/""$formatted_timeTo""__550x475_False_False_True_0_12_0_0_run""$formatted_timeFrom"".png")
+sleep 0.3
+echo ""
+echo "Downloading image..."
+# Downloading image
+wget -O ".bcli/input.png" $url 2>/dev/null
+
+image=".bcli/input.png"
+
+# Set number of frames to cut out
+num_frames=12
+
+# Get frame size
+size=($(identify -format "%w %h" $image))
+
+# Check if image is 6600px wide
+if [ ${size[0]} -ne 6600 ]
+then
+    echo "Image is not 6600px wide, something went wrong :O"
+    exit 1
+fi
+
+# Create a hidden folder to store some data
+folder=".bcli"
+if [ ! -d "$folder" ]; then
+    mkdir $folder
+fi
+
+# Width of each frame
+square_width=$((size[0]/num_frames))
+
+# Cut all the frames
+x=0
+count=0
+alphabet=({a..l})
+while [ $count -lt $num_frames ]
+do
+    convert $image -crop ${square_width}x${size[1]}+$x+0 +repage $folder/${alphabet[$count]}.jpg
+    x=$((x+square_width))
+    count=$((count+1))
+done
+
+# Convert images to gif
+echo ""
+echo "Creating animation..."
+delay="120"
+convert -delay $delay -loop 0 .bcli/*.jpg .bcli/out.gif
+charSet=".*:#oO\""
+trap "rm -rf $folder" EXIT
+ascii-image-converter -C -m "$charSet"  .bcli/out.gif
+
