@@ -3,7 +3,7 @@
 
 ![Header image](img/buienradar-cli_header.gif?raw=true "Title")
 
-_Please note that this script is an unofficial tool and its functionality is dependent on the website and its updates, thus the script may not always work as expected. This scipt has been tested on both Arch and Debian based linux distributions_
+_Please note that this script is an unofficial tool and its functionality is dependent on the website and its updates, thus the script may not always work as expected. This scipt has been tested on both Arch and Debian based linux distributions._
 
 ## 📓 Table Of Content :
 
@@ -88,7 +88,8 @@ do
     x=$((x+square_width))
     count=$((count+1))
 done
-```bash
+```
+
 - After cutting the sprite into separate frames, the script then uses this single line of code to convert these frames into a .gif file. These files are stored in a hidden folder that is temporarily created by the script.
 
 ```bash
@@ -96,6 +97,7 @@ convert -delay $delay -loop 0 .bcli/*.jpg .bcli/out.gif
 ```
 
 - As the final step, the script converts the image to an ASCII animation using a custom set of characters and displays it in the terminal.
+
 ```bash
 charSet=".*:#oO\""
 trap "rm -rf $folder" EXIT
