@@ -52,7 +52,7 @@ echo ""
 sleep 0.3
 ctime=$(date +%s)
 round=$(echo "$ctime / 300 - 15" | bc)
-timeFrom=$(echo "$round * 300" | bc)
+timeFrom=$(echo "$round * 300 - 6000" | bc) # -6000 seems to be the correction needed for summer time
 timeTo=$(echo "$timeFrom + 900" | bc)
 formatted_timeFrom=$(date -d @"$timeFrom" +"%Y%m%d%H%M")
 formatted_timeTo=$(date -d @"$timeTo" +"%Y%m%d%H%M")
