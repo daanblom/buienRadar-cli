@@ -45,7 +45,7 @@ fi
                                                                                                              
 echo ""
 echo "An unofficial command-line tool to display the rain forecast from the popular Dutch website buienradar.nl "                                                                                                           
-echo "V1.0.0 - Code by github.com/daanblom"
+echo "V1.0.1 - Code by github.com/daanblom"
 echo ""
 
 # Creating timestamps needed to fetch image from the web
