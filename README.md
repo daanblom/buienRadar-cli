@@ -1,3 +1,6 @@
+## ‼️ Since the recent update of buienradar.nl this script is no longer working, so i will archive this repository.
+With the update the way the forecast is rendered completely changed. To to make the script work again i would basically need to start from scratch, which i might do another day!
+
 ## ☂️ buienRadar-cli 
 ### An unofficial command-line tool to display the rain forecast from the popular Dutch website buienradar.nl. The website typically displays images in a browser, while this script provides ASCII art in the terminal.
 
